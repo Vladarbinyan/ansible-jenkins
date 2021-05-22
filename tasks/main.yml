@@ -1,0 +1,10 @@
+---
+# tasks file for Jenkins + NGINX
+- name: Install Jenkins + NGINX to RHEL
+  import_tasks: redhat.yml
+  when: ansible_facts['os_family']|lower == 'redhat'
+
+- name: Install Jenkins + NGINX to Debian 
+  import_tasks: debian.yml
+  when: ansible_facts['os_family']|lower == 'debian'
+

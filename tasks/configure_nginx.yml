@@ -1,0 +1,8 @@
+- name: Configure nginx
+  template: src=nginx.conf dest=/etc/nginx/sites-available/jenkins-master.conf
+
+- name: Disable default
+  file: path=/etc/nginx/sites-enabled/default state=absent
+
+- name: Enable nginx proxy
+  file: src=/etc/nginx/sites-available/jenkins-master.conf dest=/etc/nginx/sites-enabled/jenkins-master.conf state=link

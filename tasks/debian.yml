@@ -1,0 +1,48 @@
+---
+- name: Add Jenkins apt repository key.
+  apt_key:
+    url: "https://pkg.jenkins.io/debian-stable/jenkins.io.key"
+    state: present
+
+- name: Add Jenkins apt repository.
+  apt_repository:
+    repo: "deb https://pkg.jenkins.io/debian-stable binary/"
+    state: present
+    update_cache: true
+
+- name: Install JRE
+  apt: name=default-jre-headless state=present
+
+
+- name: Install Jenkins
+  apt: name=jenkins state=present
+
+- name: Configure Jenkins #make jenkins invisible from outside
+  lineinfile:
+    dest=/etc/default/jenkins
+    regexp='^JENKINS_ARGS='
+    line='JENKINS_ARGS="--webroot=/var/cache/$NAME/war --httpPort=$HTTP_PORT --httpListenAddress=127.0.0.1"'
+  notify:
+    - restart jenkins
+
+
+
+- name: Enable and start Jenkins
+  service: name=jenkins state=started enabled=true
+
+
+- name: Install nginx
+  apt: name=nginx state=present
+
+
+- name: Configure nginx proxy
+  import_tasks: configure_nginx.yml
+  notify:
+    - restart nginx
+
+
+- name: Enable and start
+  service: name=nginx state=started enabled=true
+
+
+
